@@ -1,0 +1,451 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Chakra Petch', sans-serif;
+    background: #1a1a1a;
+    color: white;
+    min-height: 100vh;
+}
+
+.game-container {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding: 20px;
+    overflow-x: auto;
+}
+
+/* Game Title */
+.game-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.game-title h1 {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    letter-spacing: 3px;
+    margin: 0;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Game Timer */
+.game-timer {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.timer-display {
+    font-size: 1.2em;
+    font-weight: 400;
+    color: white;
+    letter-spacing: 1px;
+    font-family: 'Chakra Petch', monospace;
+    background: #2a2a2a;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    padding: 8px 16px;
+    display: inline-block;
+    min-width: 160px;
+}
+
+/* Currency Bar */
+.currency-bar {
+    display: flex;
+    justify-content: space-around;
+    background: #2a2a2a;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #404040;
+}
+
+.currency-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+}
+
+.currency-icon {
+    font-size: 1.5em;
+}
+
+.currency-label {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.currency-value {
+    font-size: 1.2em;
+    color: #00ff88;
+    font-weight: 600;
+}
+
+/* Building Grid */
+.building-grid {
+    display: grid;
+    grid-template-columns: 750px calc(100% - 770px);
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    height: 70vh;
+    min-width: 1900px;
+}
+
+.building-panel {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.panel-header {
+    background: #2a2a2a;
+    color: white;
+    padding: 15px;
+    font-weight: bold;
+    font-size: 0.55em;
+    text-align: center;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #404040;
+}
+
+.panel-content {
+    height: calc(100% - 60px);
+    padding: 15px;
+    overflow-y: auto;
+}
+
+.buildings-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    height: 100%;
+    overflow-x: auto;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+/* Panel Colors */
+.wellbeing-panel {
+    background: #2a2a2a;
+    border: 1px solid #404040;
+}
+
+.processing-panel {
+    background: #2a2a2a;
+    border: 1px solid #404040;
+}
+
+.resources-panel {
+    background: #2a2a2a;
+    border: 1px solid #404040;
+}
+
+.others-panel {
+    background: #2a2a2a;
+    border: 1px solid #404040;
+}
+
+/* Building Module */
+.building-module {
+    background: #2a2a2a;
+    color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid #404040;
+}
+
+.building-module.compact {
+    padding: 10px;
+    min-width: 0;
+    min-height: 0;
+    width: 220px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.building-module.locked {
+    background: #1a1a1a;
+    opacity: 0.6;
+    border: 1px solid #333;
+}
+
+/* 1. Building Header */
+.building-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 24px;
+}
+
+.building-icon {
+    font-size: 1.2em;
+    width: 20px;
+    text-align: center;
+}
+
+.building-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.building-name {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: white;
+}
+
+.building-level {
+    font-size: 0.7em;
+    color: #00ff88;
+    font-weight: 600;
+}
+
+/* 2. Building Description */
+.building-description {
+    height: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.description-line {
+    font-size: 0.7em;
+    color: #ccc;
+    line-height: 1.2;
+    height: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+/* 3. Occupancy */
+.occupancy-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 20px;
+}
+
+.occupancy-label {
+    font-size: 1em;
+    min-width: 20px;
+    text-align: center;
+}
+
+.occupancy-bar {
+    flex: 1;
+    background: #404040;
+    border-radius: 4px;
+    height: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.occupancy-fill {
+    background: #00ff88;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.occupancy-text {
+    font-weight: bold;
+    font-size: 0.8em;
+    color: white;
+    min-width: 30px;
+    text-align: center;
+}
+
+.add-button {
+    background: #00ff88;
+    color: #1a1a1a;
+    border: none;
+    border-radius: 3px;
+    width: 20px;
+    height: 20px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.add-button:hover {
+    background: #00cc6a;
+}
+
+/* 4. Upgrade Title */
+.upgrade-title {
+    font-weight: bold;
+    color: white;
+    font-size: 0.8em;
+    height: 16px;
+    display: flex;
+    align-items: center;
+}
+
+/* 5. Upgrade Progress Bar (thinner) */
+.upgrade-progress-bar {
+    background: #404040;
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.upgrade-progress-fill {
+    background: #00ff88;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+/* 6. Currency Requirements */
+.currency-requirements {
+    height: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.currency-requirement {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.75em;
+    height: 18px;
+}
+
+.currency-icon {
+    font-size: 0.9em;
+    width: 16px;
+}
+
+.currency-label {
+    min-width: 30px;
+    color: white;
+}
+
+.currency-progress {
+    color: white;
+    min-width: 40px;
+    text-align: center;
+}
+
+.add-resource-btn {
+    background: #00ff88;
+    color: #1a1a1a;
+    border: none;
+    border-radius: 2px;
+    padding: 2px 4px;
+    font-size: 0.6em;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-weight: bold;
+}
+
+.add-resource-btn:hover {
+    background: #00cc6a;
+}
+
+/* 7. Items Title */
+.items-title {
+    font-weight: bold;
+    color: white;
+    font-size: 0.8em;
+    height: 16px;
+    display: flex;
+    align-items: center;
+}
+
+/* 8. Item Slots */
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    height: 24px;
+}
+
+.item-slot {
+    background: #404040;
+    border: 2px dashed #666;
+    border-radius: 2px;
+    aspect-ratio: 1;
+    font-size: 1em;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.item-slot:hover {
+    background: #555;
+    border-color: #00ff88;
+}
+
+/* Locked Building Styles */
+.lock-icon {
+    font-size: 1.2em;
+    opacity: 0.6;
+}
+
+.unlock-requirement {
+    font-size: 0.8em;
+    color: #999;
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+/* Empty Panel */
+.empty-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 1.2em;
+    color: rgba(0, 0, 0, 0.5);
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .game-title h1 {
+        font-size: 1.8em;
+        letter-spacing: 2px;
+    }
+    
+    .building-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, 1fr);
+    }
+    
+    .currency-bar {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .currency-item {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
