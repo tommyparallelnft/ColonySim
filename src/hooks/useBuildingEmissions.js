@@ -58,7 +58,7 @@ export function useBuildingEmissions(gameState, updateCurrency, addNotification)
       if (amount > 0) {
         updateCurrency(currency, amount)
         if (addNotification) {
-          addNotification(`${building.name} produced ${amount} ${currency} (${colonistMultiplier} colonists × Lv.${levelMultiplier})`, 'success', 2000)
+          addNotification(`${building.name} produced ${amount} ${currency} (${colonistMultiplier} colonists × Lv.${levelMultiplier})`, 'success', 2000, building.icon)
         }
         console.log(`${building.name} emitted ${amount} ${currency} (${colonistMultiplier} colonists × Lv.${levelMultiplier})`)
       }

@@ -97,7 +97,7 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
     }
     
     onUnlockBuilding(building.id)
-    onAddNotification(`${building.name} unlocked!`, 'success', 3000)
+    onAddNotification(`${building.name} unlocked!`, 'success', 3000, building.icon)
   }
 
   return (
@@ -177,7 +177,7 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
             const success = onAddOccupant(building.id)
             if (onAddNotification) {
               if (success) {
-                onAddNotification(`Added occupant to ${building.name}`, 'success', 2000)
+                onAddNotification(`Added occupant to ${building.name}`, 'success', 2000, building.icon)
               } else {
                 onAddNotification(`Not enough social currency (need 10)`, 'error', 3000)
               }
@@ -198,7 +198,7 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
             onClick={() => {
               onLevelUp(building.id)
               if (onAddNotification) {
-                onAddNotification(`${building.name} leveled up to Level ${building.level + 1}!`, 'success', 3000)
+                onAddNotification(`${building.name} leveled up to Level ${building.level + 1}!`, 'success', 3000, building.icon)
               }
             }}
           >
@@ -234,15 +234,15 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
                     const playerHas = currencies[currency] || 0
                     
                     if (building.occupancy === 0) {
-                      if (onAddNotification) {
-                        onAddNotification(`Assign a colonist to ${building.name} before contributing resources`, 'error', 3000)
-                      }
+                    if (onAddNotification) {
+                      onAddNotification(`Assign a colonist to ${building.name} before contributing resources`, 'error', 3000, building.icon)
+                    }
                       return
                     }
                     
                     if (currentAmount >= neededAmount) {
                       if (onAddNotification) {
-                        onAddNotification(`${building.name} ${currency} requirement already fulfilled`, 'info', 2000)
+                        onAddNotification(`${building.name} ${currency} requirement already fulfilled`, 'info', 2000, building.icon)
                       }
                       return
                     }
@@ -256,7 +256,7 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
                     
                     onAddResource(building.id, currency)
                     if (onAddNotification) {
-                      onAddNotification(`Added ${currency} to ${building.name}`, 'success', 2000)
+                      onAddNotification(`Added ${currency} to ${building.name}`, 'success', 2000, building.icon)
                     }
                   }}
                   disabled={building.locked || building.occupancy === 0 || req.current >= req.needed || (currencies[currency] || 0) < 1}
@@ -290,13 +290,13 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
               onClick={() => {
                 if (!hasResources) {
                   if (onAddNotification) {
-                    onAddNotification(`Not enough resources to craft items in ${building.name}`, 'error', 2000)
+                    onAddNotification(`Not enough resources to craft items in ${building.name}`, 'error', 2000, building.icon)
                   }
                   return
                 }
                 onCraftItem(building.id, index)
                 if (onAddNotification) {
-                  onAddNotification(`Crafted item in ${building.name}`, 'success', 2000)
+                  onAddNotification(`Crafted item in ${building.name}`, 'success', 2000, building.icon)
                 }
               }}
               disabled={building.locked}

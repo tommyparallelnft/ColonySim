@@ -3,9 +3,9 @@ import { useState, useCallback } from 'react'
 export function useNotifications() {
   const [notifications, setNotifications] = useState([])
 
-  const addNotification = useCallback((message, type = 'info', duration = 3000) => {
+  const addNotification = useCallback((message, type = 'info', duration = 3000, buildingIcon = null) => {
     const id = Date.now() + Math.random()
-    const notification = { id, message, type, duration }
+    const notification = { id, message, type, duration, buildingIcon }
     
     setNotifications(prev => [notification, ...prev])
     

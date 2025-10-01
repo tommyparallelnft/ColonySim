@@ -14,7 +14,8 @@ function NotificationSystem({ notifications, onRemoveNotification }) {
         >
           <div className="notification-content">
             <span className="notification-icon">
-              {notification.type === 'success' ? '✅' : 
+              {notification.buildingIcon ? notification.buildingIcon : 
+               notification.type === 'success' ? '✅' : 
                notification.type === 'error' ? '❌' : 
                notification.type === 'info' ? 'ℹ️' : '🔔'}
             </span>
