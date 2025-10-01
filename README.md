@@ -1,94 +1,154 @@
-# Colony Economy Prototype
+# Colony Sim
 
-A resource-driven survival clicker game where players grow a struggling outpost into a thriving colony.
+A React-based colony simulation game where players manage resources, build structures, and unlock new buildings through strategic progression.
 
 ## 🎮 Game Features
 
-### Core Gameplay
-- **4 Core Currencies**: Social, Technology, Money, Materials
-- **13 Buildings** across 4 categories with unique functions
-- **Timer-based Emissions**: Buildings automatically generate resources
-- **Occupancy System**: Buildings need workers to function
-- **Upgrade System**: Progress bars and currency requirements
-- **Item Crafting**: 3 item slots per building
+- **Resource Management**: Manage four currencies (Social, Technology, Money, Materials)
+- **Building System**: Construct and upgrade various buildings with different purposes
+- **Colonist Assignment**: Assign colonists to buildings for resource production
+- **Progressive Unlocking**: Unlock new buildings by meeting specific requirements
+- **Real-time Updates**: Automatic resource generation every 5 seconds
+- **Notification System**: Get feedback on all your actions
+- **Level Up Mechanics**: Upgrade buildings to increase their efficiency
 
-### Building Categories
+## 🏗️ Building Categories
 
-#### Wellbeing (3 buildings)
-- **Hab Unit** 🏠 - Primary housing facility
-- **Gym** 🏋️ - Fitness facility for physical health  
-- **Tavern** 🍺 - Social gathering place
+### Wellbeing
+- **HAB UNIT** 🏠 - Housing for colonists
+- **GYM** 🏋️ - Fitness and recreation
+- **TAVERN** 🍺 - Social gathering place
 
-#### Resources (4 buildings)
-- **Mine** ⛏️ - Extracts raw materials
-- **Hydroponics** 🌱 - Advanced farming facility
-- **Water Tower** 💧 - Provides clean water
-- **Warehouse** 📦 - Storage facility
+### Resources
+- **MINE** ⛏️ - Extract materials
+- **HYDROPONICS** 🌱 - Advanced agriculture (unlocks with HAB UNIT Lv.2)
+- **WATER TOWER** 💧 - Water management
+- **WAREHOUSE** 📦 - Storage facility
 
-#### Processing (2 buildings)
-- **Factory** 🏭 - Industrial material processing
-- **Lab** 🔬 - Research and development
+### Processing
+- **FACTORY** 🏭 - Industrial production
+- **LAB** 🔬 - Research and development
 
-#### Others (4 buildings)
-- **Shop** 🛒 - Commercial center
-- **Government** 🏛️ - Administrative center
-- **Comms Array** 📡 - Communication hub
-- **Defense Wall** 🛡️ - Protective barrier
+### Others
+- **SHOP** 🛒 - Commercial activities
+- **GOVERNMENT** 🏛️ - Administrative center
+- **COMMS ARRAY** 📡 - Communication systems
+- **DEFENSE WALL** 🛡️ - Security infrastructure
 
-## 🏗️ Technical Implementation
+## 🚀 Getting Started
 
-### Architecture
-- **Vanilla JavaScript** - No frameworks, pure JS
-- **CSS Grid/Flexbox** - Responsive layout system
-- **Fixed Building Layout** - Consistent 8-section structure per building
-- **Timer-based System** - Automatic resource generation
+### Prerequisites
+- Node.js (version 14 or higher)
+- npm or yarn
 
-### Building Structure
-Each building follows a fixed 8-section layout:
-1. **Building Header** - Icon, name, level, lock status
-2. **Description** - 2-line building info or requirements
-3. **Occupancy** - Progress bar and add button
-4. **Upgrade Title** - Simple "UPGRADE" label
-5. **Progress Bar** - Thin upgrade progress indicator
-6. **Currency Requirements** - 2 currency progress displays
-7. **Items Title** - Simple "ITEMS" label
-8. **Item Slots** - 3 square crafting slots
+### Installation
 
-### Key Systems
-- **Game State Management** - Centralized state object
-- **Emission System** - Buildings emit currencies based on level/occupancy
-- **Notification System** - Stacking notifications for resource gains
-- **Responsive Design** - Adapts to different screen sizes
-
-## 📁 File Structure
-```
-ColonySim/
-├── index.html          # Main HTML structure
-├── styles.css          # All styling and layout
-├── script.js           # Game logic and state management
-└── README.md           # This file
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/colony-sim.git
+cd colony-sim
 ```
 
-## 🎯 Current Status
-- ✅ Complete vanilla JS implementation
-- ✅ All 13 buildings with fixed layouts
-- ✅ Timer-based resource generation
-- ✅ Notification system
-- ✅ Responsive grid layout
-- ✅ Consistent building structure
+2. Install dependencies:
+```bash
+npm install
+```
 
-## 🚀 Next Steps
-- [ ] Migrate to React for better maintainability
-- [ ] Add save/load functionality
-- [ ] Implement building unlock system
-- [ ] Add more complex crafting recipes
-- [ ] Add sound effects and animations
+3. Start the development server:
+```bash
+npm run dev
+```
 
-## 🎨 Design Features
-- **Dark Theme** - Professional dark UI
-- **Chakra Petch Font** - Modern, readable typography
-- **Consistent Spacing** - 220px × 280px building modules
-- **Color-coded Sections** - Visual organization
-- **Emoji Icons** - Intuitive building identification
+4. Open your browser and navigate to `http://localhost:5173`
 
-Built with ❤️ for colony management simulation.
+## 🎯 How to Play
+
+1. **Start with Resources**: You begin with 10 of each currency
+2. **Assign Colonists**: Use Social currency to assign colonists to buildings
+3. **Contribute Resources**: Add currencies to upgrade buildings (requires at least 1 colonist)
+4. **Level Up**: When all requirements are met, click "LEVEL UP!" to upgrade
+5. **Unlock Buildings**: Meet unlock conditions to access new buildings
+6. **Manage Production**: Buildings generate resources every 5 seconds based on colonists and level
+
+## 🔧 Technical Details
+
+- **Framework**: React 18 with Vite
+- **Styling**: CSS3 with custom properties and animations
+- **State Management**: Custom React hooks
+- **Font**: Chakra Petch (monospace)
+- **Build Tool**: Vite for fast development and building
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── Building.jsx     # Individual building component
+│   ├── BuildingGrid.jsx # Building layout grid
+│   ├── BuildingPanel.jsx # Building category panels
+│   ├── CurrencyBar.jsx  # Top currency display
+│   ├── GameContainer.jsx # Main game container
+│   ├── GameTimer.jsx    # Game time display
+│   ├── GameTitle.jsx    # Game title component
+│   └── NotificationSystem.jsx # Notification display
+├── hooks/               # Custom React hooks
+│   ├── useBuildingEmissions.js # Resource generation logic
+│   ├── useGameState.js  # Main game state management
+│   └── useNotifications.js # Notification management
+├── App.jsx              # Root component
+├── main.jsx             # Application entry point
+└── index.css            # Global styles
+```
+
+## 🎨 Features in Detail
+
+### Building Unlock System
+- Buildings can have unlock conditions (e.g., HYDROPONICS requires HAB UNIT Lv.2)
+- Visual feedback with green stroke when unlock conditions are met
+- Manual unlock with "UNLOCK!" button and fanfare sound
+- Clear requirement display in lock overlay
+
+### Resource Production
+- Each colonist acts as a multiplier for resource generation
+- Building levels also multiply resource output
+- Formula: `baseAmount × colonists × level`
+- Automatic generation every 5 seconds
+
+### Upgrade System
+- Contribute currencies to meet upgrade requirements
+- Progress bar shows completion percentage
+- "LEVEL UP!" button appears when all requirements are met
+- Requirements double with each level
+
+## 🚀 Deployment
+
+The project is configured for easy deployment to GitHub Pages:
+
+1. Build the project:
+```bash
+npm run build
+```
+
+2. The built files will be in the `dist/` directory
+
+3. Deploy to GitHub Pages or any static hosting service
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🎮 Play the Game
+
+[Live Demo](https://yourusername.github.io/colony-sim) - Coming soon!
+
+---
+
+Built with ❤️ using React and Vite
