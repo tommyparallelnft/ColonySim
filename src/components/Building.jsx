@@ -1,6 +1,8 @@
 import React from 'react'
+import { useSoundEffects } from '../hooks/useSoundEffects'
 
 function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, currencies, onLevelUp, onUnlockBuilding, gameState }) {
+  const { playClickSound } = useSoundEffects()
   const getBuildingDescription = (building) => {
     if (building.locked) {
       return [
@@ -97,7 +99,7 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
     }
     
     onUnlockBuilding(building.id)
-    onAddNotification(`${building.name} unlocked!`, 'success', 3000, building.icon)
+    onAddNotification(`${building.name} unlocked!`, 'success', 3000, building.icon, false) // Don't play sound, we have fanfare
   }
 
   return (
@@ -111,7 +113,10 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
                 <div className="locked-building-icon">{building.icon}</div>
                 <div className="locked-building-name">{building.name}</div>
               </div>
-              <button className="unlock-button" onClick={handleUnlock}>
+              <button className="unlock-button" onClick={() => {
+                playClickSound()
+                handleUnlock()
+              }}>
                 UNLOCK!
               </button>
             </div>
@@ -174,6 +179,9 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
         <button 
           className="add-button" 
           onClick={() => {
+            // Play click sound for feedback
+            playClickSound()
+            
             const success = onAddOccupant(building.id)
             if (onAddNotification) {
               if (success) {
@@ -196,6 +204,9 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
           <button 
             className="level-up-button"
             onClick={() => {
+              // Play click sound for feedback
+              playClickSound()
+              
               onLevelUp(building.id)
               if (onAddNotification) {
                 onAddNotification(`${building.name} leveled up to Level ${building.level + 1}!`, 'success', 3000, building.icon)
@@ -229,6 +240,9 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
                 <button 
                   className="add-resource-btn" 
                   onClick={() => {
+                    // Play click sound for feedback
+                    playClickSound()
+                    
                     const currentAmount = req.current
                     const neededAmount = req.needed
                     const playerHas = currencies[currency] || 0
@@ -288,6 +302,9 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
               key={index}
               className={`item-slot ${!hasResources ? 'insufficient-resources' : ''}`}
               onClick={() => {
+                // Play click sound for feedback
+                playClickSound()
+                
                 if (!hasResources) {
                   if (onAddNotification) {
                     onAddNotification(`Not enough resources to craft items in ${building.name}`, 'error', 2000, building.icon)
