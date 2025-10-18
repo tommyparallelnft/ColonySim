@@ -144,7 +144,8 @@ app.get('/api/buildings', async (req, res) => {
     const buildings = {};
     response.results.forEach(page => {
       const building = transformNotionPageToBuilding(page);
-      if (building.id) {
+      // Only include buildings with valid ID and name
+      if (building.id && building.name) {
         buildings[building.id] = building;
       }
     });
