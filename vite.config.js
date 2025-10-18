@@ -6,7 +6,10 @@ export default defineConfig({
   base: '/ColonySim/',
   server: {
     port: 3000,
-    open: true
+    open: true,
+    headers: {
+      'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'none';"
+    }
   },
   build: {
     outDir: 'dist',

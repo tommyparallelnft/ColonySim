@@ -1,7 +1,7 @@
 import React from 'react'
 import Building from './Building'
 
-function BuildingPanel({ title, buildings, currencies, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, gameState }) {
+function BuildingPanel({ title, buildings, currencies, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, gameState, onRegisterFloatingIndicator }) {
   return (
     <div className={`building-panel ${title.toLowerCase()}-panel`}>
       <div className="panel-header">{title}</div>
@@ -19,7 +19,11 @@ function BuildingPanel({ title, buildings, currencies, onAddOccupant, onAddResou
               currencies={currencies}
               onLevelUp={onLevelUp}
               onUnlockBuilding={onUnlockBuilding}
+              onOpenModal={onOpenModal}
+              onAddReward={onAddReward}
+              isSoundEnabled={isSoundEnabled}
               gameState={gameState}
+              onShowFloatingIndicator={(callback) => onRegisterFloatingIndicator(building.id, callback)}
             />
           ))}
         </div>

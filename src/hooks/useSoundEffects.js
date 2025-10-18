@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 
-export function useSoundEffects() {
+export function useSoundEffects(isSoundEnabled = true) {
   const playClickSound = useCallback(() => {
+    if (!isSoundEnabled) return
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)()
       const oscillator = audioContext.createOscillator()
@@ -23,9 +24,10 @@ export function useSoundEffects() {
       // Fallback: silent fail
       console.log('🔊 Click sound')
     }
-  }, [])
+  }, [isSoundEnabled])
 
   const playSuccessSound = useCallback(() => {
+    if (!isSoundEnabled) return
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)()
       const oscillator = audioContext.createOscillator()
@@ -48,9 +50,10 @@ export function useSoundEffects() {
       // Fallback: silent fail
       console.log('🔊 Success sound')
     }
-  }, [])
+  }, [isSoundEnabled])
 
   const playErrorSound = useCallback(() => {
+    if (!isSoundEnabled) return
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)()
       const oscillator = audioContext.createOscillator()
@@ -72,7 +75,7 @@ export function useSoundEffects() {
       // Fallback: silent fail
       console.log('🔊 Error sound')
     }
-  }, [])
+  }, [isSoundEnabled])
 
   return {
     playClickSound,

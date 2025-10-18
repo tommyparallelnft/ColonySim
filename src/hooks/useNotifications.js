@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react'
 import { useSoundEffects } from './useSoundEffects'
 
-export function useNotifications() {
+export function useNotifications(isSoundEnabled = true) {
   const [notifications, setNotifications] = useState([])
-  const { playClickSound, playSuccessSound, playErrorSound } = useSoundEffects()
+  const { playClickSound, playSuccessSound, playErrorSound } = useSoundEffects(isSoundEnabled)
 
   const addNotification = useCallback((message, type = 'info', duration = 3000, buildingIcon = null, playSound = true) => {
     const id = Date.now() + Math.random()

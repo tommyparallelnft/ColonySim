@@ -1,36 +1,38 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import BuildingPanel from './BuildingPanel'
 
-function BuildingGrid({ gameState, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding }) {
-  const buildingCategories = {
-    wellbeing: {
-      title: 'WELLBEING',
-      buildings: ['habUnit', 'gym', 'tavern']
-    },
-    resources: {
-      title: 'RESOURCES', 
-      buildings: ['mine', 'hydroponics', 'waterTower', 'warehouse']
-    },
-    processing: {
-      title: 'PROCESSING',
-      buildings: ['factory', 'lab']
-    },
-    others: {
-      title: 'OTHERS',
-      buildings: ['shop', 'government', 'commsArray', 'defenseWall']
-    }
-  }
+function BuildingGrid({ gameState, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, onRegisterFloatingIndicator }) {
+  // Dynamically organize buildings by their category from gameState
+  const buildingsByCategory = useMemo(() => {
+    const categories = {}
+    
+    // Group buildings by their category
+    Object.entries(gameState.buildings).forEach(([buildingId, building]) => {
+      const categoryKey = building.category?.toLowerCase() || 'others'
+      
+      if (!categories[categoryKey]) {
+        categories[categoryKey] = {
+          title: building.category?.toUpperCase() || 'OTHERS',
+          buildings: []
+        }
+      }
+      
+      categories[categoryKey].buildings.push({
+        id: buildingId,
+        ...building
+      })
+    })
+    
+    return categories
+  }, [gameState.buildings])
 
   return (
     <div className="building-grid">
-      {Object.entries(buildingCategories).map(([categoryKey, category]) => (
+      {Object.entries(buildingsByCategory).map(([categoryKey, category]) => (
         <BuildingPanel
           key={categoryKey}
           title={category.title}
-          buildings={category.buildings.map(buildingId => ({
-            id: buildingId,
-            ...gameState.buildings[buildingId]
-          }))}
+          buildings={category.buildings}
           onAddOccupant={onAddOccupant}
           onAddResource={onAddResource}
           onCraftItem={onCraftItem}
@@ -39,7 +41,11 @@ function BuildingGrid({ gameState, onAddOccupant, onAddResource, onCraftItem, on
           currencies={gameState.currencies}
           onLevelUp={onLevelUp}
           onUnlockBuilding={onUnlockBuilding}
+          onOpenModal={onOpenModal}
+          onAddReward={onAddReward}
+          isSoundEnabled={isSoundEnabled}
           gameState={gameState}
+          onRegisterFloatingIndicator={onRegisterFloatingIndicator}
         />
       ))}
     </div>

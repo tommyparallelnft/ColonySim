@@ -24,13 +24,17 @@ body {
     margin-bottom: 30px;
 }
 
-.game-title h1 {
-    font-size: 2.5em;
-    font-weight: 700;
-    color: #00ff88;
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-    letter-spacing: 3px;
-    margin: 0;
+.game-logo {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.3));
+    transition: all 0.3s ease;
+}
+
+.game-logo:hover {
+    filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.5));
+    transform: scale(1.02);
 }
 
 @keyframes gradientShift {
@@ -46,6 +50,33 @@ body {
     margin-bottom: 20px;
     gap: 20px;
     position: relative;
+}
+
+/* Sound Toggle Button */
+.sound-toggle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #333;
+    border: 2px solid #555;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.2em;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.sound-toggle:hover {
+    background: #444;
+    border-color: #666;
+    transform: translateY(-50%) scale(1.05);
+}
+
+.sound-toggle:active {
+    transform: translateY(-50%) scale(0.95);
 }
 
 /* Game Timer */
@@ -76,7 +107,7 @@ body {
     background: #2a2a2a;
     border-radius: 8px;
     padding: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     border: 1px solid #404040;
 }
 
@@ -86,6 +117,8 @@ body {
     gap: 8px;
     font-weight: bold;
     margin: 0 15px;
+    color: white;
+    transition: color 0.3s ease;
 }
 
 .currency-icon {
@@ -97,9 +130,139 @@ body {
     opacity: 0.8;
 }
 
+/* Currency/Material Feedback Animations */
+.currency-item.gained,
+.currency-item.gained * {
+    color: #00ff88 !important;
+    transform: scale(1.1);
+    transition: all 0.3s ease-out;
+}
+
+.currency-item.consumed,
+.currency-item.consumed * {
+    color: #ff4444 !important;
+    transform: scale(1.1);
+    transition: all 0.3s ease-out;
+}
+
+/* Floating Indicators */
+.floating-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #00ff88;
+    border-radius: 12px;
+    padding: 4px 8px;
+    font-size: 0.9em;
+    font-weight: bold;
+    color: #00ff88;
+    pointer-events: none;
+    z-index: 1000;
+    animation: floatUp 1.3s ease-out forwards;
+}
+
+.floating-indicator.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+.floating-indicator.fading {
+    opacity: 0;
+    transform: translate(-50%, -80px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.floating-emoji {
+    font-size: 1.1em;
+}
+
+.floating-amount {
+    color: #ffffff;
+    font-size: 0.9em;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    70% {
+        opacity: 1;
+        transform: translate(-50%, -70px) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -80px) scale(1);
+    }
+}
+
+/* Materials Bar */
+.materials-bar {
+    display: flex;
+    justify-content: space-around;
+    background: #1a1a1a;
+    border-radius: 6px;
+    padding: 10px;
+    margin: 0 0 20px 0;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid #333;
+}
+
+.material-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 500;
+    margin: 0 0.5px;
+    font-size: 0.9em;
+    color: white;
+    transition: color 0.3s ease;
+}
+
+.material-icon {
+    font-size: 1.1em;
+}
+
+/* Material Feedback Animations */
+.material-item.gained,
+.material-item.gained * {
+    color: #00ff88 !important;
+    transform: scale(1.1);
+    transition: all 0.3s ease-out;
+}
+
+.material-item.consumed,
+.material-item.consumed * {
+    color: #ff4444 !important;
+    transform: scale(1.1);
+    transition: all 0.3s ease-out;
+}
+
+.material-label {
+    color: #ccc;
+    font-size: 0.8em;
+}
+
+.material-value {
+    color: #fff;
+    font-weight: bold;
+}
+
+.material-separator {
+    color: #555;
+    font-weight: bold;
+    margin: 0 1px;
+    font-size: 0.9em;
+}
+
 .currency-value {
     font-size: 1.2em;
-    color: #00ff88;
+    color: white;
     font-weight: 600;
 }
 
@@ -167,6 +330,105 @@ body {
 .others-panel {
     background: #2a2a2a;
     border: 1px solid #404040;
+}
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+  border: 2px solid #444;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+.modal-content.unlock {
+  border-color: #00ff88;
+  box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #333, #222);
+  padding: 20px;
+  border-bottom: 1px solid #444;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-content.unlock .modal-header {
+  background: linear-gradient(135deg, #00ff88, #00cc6a);
+  color: #1a1a1a;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+  font-family: 'Chakra Petch', monospace;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 2em;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.modal-content.unlock .modal-close {
+  color: #1a1a1a;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.modal-body {
+  padding: 20px;
+  color: #ccc;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Building Module */
@@ -834,6 +1096,22 @@ body {
     .currency-item {
         flex: 1;
         min-width: 120px;
+    }
+    
+    .materials-bar {
+        flex-wrap: wrap;
+        gap: 1px;
+    }
+    
+    .material-item {
+        flex: 1;
+        min-width: 80px;
+        margin: 0 0.25px;
+    }
+    
+    .material-separator {
+        margin: 0 0.5px;
+        font-size: 0.8em;
     }
 }
 

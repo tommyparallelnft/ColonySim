@@ -1,9 +1,14 @@
 import React from 'react'
+import colonyLogo from '../../img/colony_logo.png'
 
 function GameTitle() {
   return (
     <div className="game-title">
-      <h1>COLONY ECONOMY PROTOTYPE</h1>
+      <img 
+        src={colonyLogo} 
+        alt="Colony Economy Prototype" 
+        className="game-logo"
+      />
     </div>
   )
 }

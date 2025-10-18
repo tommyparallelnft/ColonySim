@@ -1,15 +1,24 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import { useSoundEffects } from '../hooks/useSoundEffects'
+import FloatingIndicator from './FloatingIndicator'
 
-function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, currencies, onLevelUp, onUnlockBuilding, gameState }) {
-  const { playClickSound } = useSoundEffects()
+function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, currencies, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, gameState, onShowFloatingIndicator }) {
+  const { playClickSound } = useSoundEffects(isSoundEnabled)
+  const [floatingIndicators, setFloatingIndicators] = useState([])
   const getBuildingDescription = (building) => {
     if (building.locked) {
       return [
-        getBuildingPurpose(building.name),
+        building.description || getBuildingPurpose(building.name),
         'Locked - Requirements not met'
       ]
     }
+    
+    // If we have a Notion description, just show that
+    if (building.description) {
+      return [building.description]
+    }
+    
+    // Otherwise show the fallback with the generic second line
     return [
       getBuildingPurpose(building.name),
       'Provides essential colony services'
@@ -45,6 +54,20 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
     return icons[currency] || '❓'
   }
 
+  const getMaterialIcon = (material) => {
+    const icons = {
+      carbon: '⚫',
+      conductive: '⚡',
+      metal: '🔩',
+      radioactive: '☢️',
+      meat: '🥩',
+      vegetables: '🥕',
+      textiles: '🧵',
+      wood: '🪵'
+    }
+    return icons[material] || '❓'
+  }
+
   const getCurrencyLabel = (currency) => {
     const labels = {
       social: 'SOC',
@@ -65,45 +88,143 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
   const isUnlockConditionMet = () => {
     if (!building.unlockCondition) return false
     
-    if (building.unlockCondition.type === 'building_level') {
-      const requiredBuilding = gameState.buildings[building.unlockCondition.building]
-      return requiredBuilding && requiredBuilding.level >= building.unlockCondition.level
+    // If there are no building or currency requirements, it's not unlockable yet
+    const hasAnyRequirements = 
+      (building.unlockCondition.buildings && Object.keys(building.unlockCondition.buildings).length > 0) ||
+      (building.unlockCondition.currencies && Object.keys(building.unlockCondition.currencies).length > 0)
+    
+    if (!hasAnyRequirements) return false
+    
+    // Check building level requirements
+    if (building.unlockCondition.buildings && Object.keys(building.unlockCondition.buildings).length > 0) {
+      for (const [buildingId, requirement] of Object.entries(building.unlockCondition.buildings)) {
+        const requiredBuilding = gameState.buildings[buildingId]
+        if (!requiredBuilding || requiredBuilding.level < requirement.level) {
+          return false
+        }
+      }
     }
-    return false
+    
+    // Check currency requirements
+    if (building.unlockCondition.currencies && Object.keys(building.unlockCondition.currencies).length > 0) {
+      for (const [currency, requirement] of Object.entries(building.unlockCondition.currencies)) {
+        const currentAmount = currencies[currency] || 0
+        if (currentAmount < requirement.amount) {
+          return false
+        }
+      }
+    }
+    
+    return true
   }
 
   const canUnlock = building.locked && isUnlockConditionMet()
 
   const handleUnlock = () => {
     // Play fanfare sound - using a simple beep pattern
-    try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-      const oscillator = audioContext.createOscillator()
-      const gainNode = audioContext.createGain()
-      
-      oscillator.connect(gainNode)
-      gainNode.connect(audioContext.destination)
-      
-      oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime) // C5
-      oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1) // E5
-      oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2) // G5
-      
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
-      
-      oscillator.start(audioContext.currentTime)
-      oscillator.stop(audioContext.currentTime + 0.5)
-    } catch (error) {
-      // Fallback: simple beep
-      console.log('🔔 Building unlocked!')
+    if (isSoundEnabled) {
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+        const oscillator = audioContext.createOscillator()
+        const gainNode = audioContext.createGain()
+        
+        oscillator.connect(gainNode)
+        gainNode.connect(audioContext.destination)
+        
+        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime) // C5
+        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1) // E5
+        oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2) // G5
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+        
+        oscillator.start(audioContext.currentTime)
+        oscillator.stop(audioContext.currentTime + 0.5)
+      } catch (error) {
+        // Fallback: simple beep
+        console.log('🔔 Building unlocked!')
+      }
     }
     
     onUnlockBuilding(building.id)
-    onAddNotification(`${building.name} unlocked!`, 'success', 3000, building.icon, false) // Don't play sound, we have fanfare
+    
+    // Show unlock modal with reward
+    const socialReward = 50 // Social currency reward
+    const moneyReward = 120 // Money reward
+    onOpenModal({
+      title: `${building.icon} ${building.name} UNLOCKED!`,
+      type: 'unlock',
+      content: (
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '1.2em', marginBottom: '15px' }}>
+            🎉 Congratulations! 🎉
+          </div>
+          <div style={{ marginBottom: '15px' }}>
+            You've unlocked the <strong>{building.name}</strong> building!
+          </div>
+          <div style={{ 
+            background: 'linear-gradient(135deg, #00ff88, #00cc6a)', 
+            color: '#1a1a1a', 
+            padding: '15px 20px', 
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            marginBottom: '15px'
+          }}>
+            <div style={{ marginBottom: '8px', fontSize: '1.1em' }}>
+              REWARDS:
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '1em' }}>
+              <div>👥 +{socialReward}</div>
+              <div>💰 +{moneyReward}</div>
+            </div>
+          </div>
+          <div style={{ fontSize: '0.9em', color: '#aaa' }}>
+            This building is now ready for colonists and upgrades!
+          </div>
+        </div>
+      )
+    })
+    
+    // Add the rewards to the player's currency
+    onAddReward('social', socialReward)
+    onAddReward('money', moneyReward)
+    onAddNotification(`+${socialReward} Social + ${moneyReward} Money reward!`, 'success', 2000, '🎁', false)
   }
 
+  const showFloatingIndicator = useCallback((emoji, amount) => {
+    console.log(`Building ${building.name}: showFloatingIndicator called with:`, emoji, amount)
+    const newIndicator = {
+      emoji,
+      amount,
+      id: Date.now() + Math.random()
+    }
+    setFloatingIndicators(prev => [...prev, newIndicator])
+    console.log(`Building ${building.name}: Added floating indicator, total indicators:`, floatingIndicators.length + 1)
+  }, [building.name, floatingIndicators.length])
+
+  // Expose the function to parent component
+  React.useEffect(() => {
+    if (onShowFloatingIndicator) {
+      console.log(`Building ${building.name}: Registering floating indicator callback`)
+      onShowFloatingIndicator(showFloatingIndicator)
+    }
+  }, [onShowFloatingIndicator, showFloatingIndicator, building.name])
+
   return (
-    <div className={`building-module compact ${building.locked ? 'locked' : ''} ${canUnlock ? 'can-unlock' : ''}`}>
+    <div className={`building-module compact ${building.locked ? 'locked' : ''} ${canUnlock ? 'can-unlock' : ''}`} style={{ position: 'relative' }}>
+      {/* Floating Indicators */}
+      {floatingIndicators.map((indicator, index) => (
+        <FloatingIndicator
+          key={index}
+          emoji={indicator.emoji}
+          amount={indicator.amount}
+          onComplete={() => {
+            setFloatingIndicators(prev => prev.filter((_, i) => i !== index))
+          }}
+        />
+      ))}
+      
+      
       {/* Lock Overlay for locked buildings */}
       {building.locked && (
         <div className={`lock-overlay ${canUnlock ? 'can-unlock' : ''}`}>
@@ -129,12 +250,27 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
               </div>
               <div className="unlock-requirements">
                 {building.unlockCondition ? (
-                  <div className="unlock-requirement-item">
-                    <span className="unlock-requirement-icon">🏠</span>
-                    <span className="unlock-requirement-amount">
-                      HAB UNIT LV.{building.unlockCondition.level}
-                    </span>
-                  </div>
+                  <>
+                    {/* Display building level requirements */}
+                    {building.unlockCondition.buildings && Object.entries(building.unlockCondition.buildings).map(([buildingId, requirement]) => {
+                      const reqBuilding = gameState.buildings[buildingId]
+                      return (
+                        <div key={buildingId} className="unlock-requirement-item">
+                          <span className="unlock-requirement-icon">{reqBuilding?.icon || '🏠'}</span>
+                          <span className="unlock-requirement-amount">
+                            {reqBuilding?.name || buildingId.toUpperCase()} LV.{requirement.level}
+                          </span>
+                        </div>
+                      )
+                    })}
+                    {/* Display currency requirements */}
+                    {building.unlockCondition.currencies && Object.entries(building.unlockCondition.currencies).map(([currency, requirement]) => (
+                      <div key={currency} className="unlock-requirement-item">
+                        <span className="unlock-requirement-icon">{getCurrencyIcon(currency)}</span>
+                        <span className="unlock-requirement-amount">{requirement.amount}</span>
+                      </div>
+                    ))}
+                  </>
                 ) : (
                   Object.entries(building.requirements).map(([currency, req]) => (
                     <div key={currency} className="unlock-requirement-item">
@@ -232,11 +368,15 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
           
           {/* 6. Currency Requirements */}
           <div className="currency-requirements">
-            {requirements.slice(0, 2).map(([currency, req]) => (
+            {requirements.slice(0, 2).map(([currency, req]) => {
+              const isFulfilled = req.current >= req.needed
+              return (
               <div key={currency} className="currency-requirement">
                 <span className="currency-icon">{getCurrencyIcon(currency)}</span>
                 <span className="currency-label">{getCurrencyLabel(currency)}</span>
-                <span className="currency-progress">{req.current}/{req.needed}</span>
+                <span className="currency-progress" style={{ color: isFulfilled ? '#00ff88' : 'inherit' }}>
+                  {req.current}/{req.needed}
+                </span>
                 <button 
                   className="add-resource-btn" 
                   onClick={() => {
@@ -278,7 +418,8 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
                   +
                 </button>
               </div>
-            ))}
+              )
+            })}
           </div>
         </>
       )}
@@ -289,13 +430,13 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
       {/* 8. Item Slots */}
       <div className="items-grid">
         {building.items.map((item, index) => {
-          // Check if player has enough resources to craft items
-          const hasResources = Object.entries(building.requirements).every(([currency, req]) => {
-            return (currencies[currency] || 0) >= 1
+          // Check if player has enough materials to craft items
+          const hasResources = Object.entries(building.itemRequirements || {}).every(([material, amount]) => {
+            return (gameState.materials[material] || 0) >= amount
           })
           
-          // Get the first two requirements to display
-          const requirements = Object.entries(building.requirements).slice(0, 2)
+          // Get the first two item requirements to display
+          const requirements = Object.entries(building.itemRequirements || {}).slice(0, 2)
           
           return (
             <button 
@@ -317,16 +458,16 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
                 }
               }}
               disabled={building.locked}
-              title={item ? `Crafted item` : `Craft item (needs: ${requirements.map(([curr, req]) => `${req.needed} ${curr}`).join(', ')})`}
+              title={item ? `Crafted item` : `Craft item (needs: ${requirements.map(([material, amount]) => `${amount} ${material}`).join(', ')})`}
             >
               {item ? (
                 <span className="item-content">{item}</span>
               ) : (
                 <div className="item-requirements">
-                  {requirements.map(([currency, req]) => (
-                    <div key={currency} className="requirement-item">
-                      <span className="requirement-icon">{getCurrencyIcon(currency)}</span>
-                      <span className="requirement-amount">{req.needed}</span>
+                  {requirements.map(([material, amount]) => (
+                    <div key={material} className="requirement-item">
+                      <span className="requirement-icon">{getMaterialIcon(material)}</span>
+                      <span className="requirement-amount">{amount}</span>
                     </div>
                   ))}
                 </div>

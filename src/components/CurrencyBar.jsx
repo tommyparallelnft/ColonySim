@@ -1,6 +1,6 @@
 import React from 'react'
 
-function CurrencyBar({ currencies, onAddCurrency }) {
+function CurrencyBar({ currencies, getFeedbackClass }) {
   const currencyConfig = [
     { key: 'social', icon: '👥', label: 'SOCIAL' },
     { key: 'technology', icon: '⚙️', label: 'TECHNOLOGY' },
@@ -10,13 +10,16 @@ function CurrencyBar({ currencies, onAddCurrency }) {
 
   return (
     <div className="currency-bar">
-      {currencyConfig.map(({ key, icon, label }) => (
-        <div key={key} className="currency-item">
-          <span className="currency-icon">{icon}</span>
-          <span className="currency-label">{label}</span>
-          <span className="currency-value">{currencies[key]}</span>
-        </div>
-      ))}
+      {currencyConfig.map(({ key, icon, label }) => {
+        const feedbackClass = getFeedbackClass ? getFeedbackClass(`currency-${key}`) : ''
+        return (
+          <div key={key} className={`currency-item ${feedbackClass}`}>
+            <span className="currency-icon">{icon}</span>
+            <span className="currency-label">{label}</span>
+            <span className="currency-value">{currencies[key]}</span>
+          </div>
+        )
+      })}
     </div>
   )
 }
