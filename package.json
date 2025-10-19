@@ -8,6 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "node deploy.js",
+    "sync-notion": "node scripts/sync-notion-to-json.js",
+    "prepush": "npm run sync-notion",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +24,7 @@
   },
   "homepage": "https://github.com/tommyparallelnft/ColonySim#readme",
   "dependencies": {
+    "node-fetch": "^2.7.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

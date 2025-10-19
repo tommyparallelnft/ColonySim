@@ -1,10 +1,11 @@
 {
   "habUnit": {
+    "id": "habUnit",
     "name": "HAB UNIT",
     "icon": "🏠",
-    "category": "wellbeing",
-    "description": "Primary housing facility for colonists",
-    "maxOccupancy": 6,
+    "category": "Wellbeing",
+    "description": "Your sleeping quarters",
+    "maxOccupancy": 4,
     "initialLevel": 1,
     "locked": false,
     "emissions": {
@@ -15,182 +16,72 @@
       }
     },
     "upgradeRequirements": {
-      "social": 10,
+      "social": 8,
       "money": 10
     },
-    "itemRequirements": {
-      "textiles": 5,
-      "wood": 3
-    },
+    "itemRequirements": {},
     "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {
-      "social": 50,
-      "money": 120
-    }
-  },
-  "gym": {
-    "name": "GYM",
-    "icon": "🏋️",
-    "category": "wellbeing",
-    "description": "Fitness facility for physical health",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "social": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "social": 10,
-      "technology": 12
-    },
-    "itemRequirements": {
-      "metal": 4,
-      "textiles": 2
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "tavern": {
-    "name": "TAVERN",
-    "icon": "🍺",
-    "category": "wellbeing",
-    "description": "Social gathering place for colonists",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "social": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "social": 10,
-      "technology": 12
-    },
-    "itemRequirements": {
-      "vegetables": 3,
-      "wood": 2
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "factory": {
-    "name": "FACTORY",
-    "icon": "🏭",
-    "category": "processing",
-    "description": "Industrial facility for material processing",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "materials": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "technology": 15,
-      "materials": 20
-    },
-    "itemRequirements": {
-      "metal": 6,
-      "conductive": 3
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "lab": {
-    "name": "LAB",
-    "icon": "🔬",
-    "category": "processing",
-    "description": "Advanced research and development facility",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "technology": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "technology": 15,
-      "materials": 20
-    },
-    "itemRequirements": {
-      "conductive": 4,
-      "radioactive": 2
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "mine": {
-    "name": "MINE",
-    "icon": "⛏️",
-    "category": "resources",
-    "description": "Extracts raw materials from the ground",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "materials": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "materials": 15,
-      "money": 20
-    },
-    "itemRequirements": {
-      "metal": 5,
-      "carbon": 3
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
+    "unlockConditions": {},
     "unlockBonuses": {}
   },
   "hydroponics": {
+    "id": "hydroponics",
     "name": "HYDROPONICS",
-    "icon": "🌱",
-    "category": "resources",
+    "icon": "🪴",
+    "category": "Resources",
     "description": "Advanced farming facility for food production",
-    "maxOccupancy": 6,
+    "maxOccupancy": 3,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {},
+    "upgradeRequirements": {
+      "social": 20,
+      "money": 20
+    },
+    "itemRequirements": {},
+    "itemSlots": 2,
+    "unlockConditions": {
+      "buildings": {
+        "habUnit": {
+          "level": 2
+        }
+      },
+      "currencies": {
+        "social": 3
+      }
+    },
+    "unlockBonuses": {}
+  },
+  "mine": {
+    "id": "mine",
+    "name": "MINE",
+    "icon": "💎",
+    "category": "Resources",
+    "description": "Mine description here",
+    "maxOccupancy": 1,
     "initialLevel": 1,
     "locked": true,
     "emissions": {
-      "vegetables": {
+      "carbon": {
         "baseAmount": 3,
         "interval": 10000,
         "type": "material"
       }
     },
     "upgradeRequirements": {
-      "technology": 12,
-      "materials": 15
+      "social": 20,
+      "money": 20
     },
-    "itemRequirements": {
-      "vegetables": 4,
-      "water": 2
-    },
-    "itemSlots": 3,
+    "itemRequirements": {},
+    "itemSlots": 1,
     "unlockConditions": {
       "buildings": {
-        "habUnit": { "level": 2 }
+        "hydroponics": {
+          "level": 2
+        }
+      },
+      "currencies": {
+        "social": 3
       }
     },
     "unlockBonuses": {
@@ -198,173 +89,41 @@
       "money": 120
     }
   },
-  "waterTower": {
+  "watertower": {
+    "id": "watertower",
     "name": "WATER TOWER",
     "icon": "💧",
-    "category": "resources",
-    "description": "Provides clean water for the colony",
-    "maxOccupancy": 6,
+    "category": "Resources",
+    "description": "Water Tower description here",
+    "maxOccupancy": 1,
     "initialLevel": 1,
     "locked": true,
     "emissions": {
-      "materials": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "materials": 15,
-      "money": 20
-    },
-    "itemRequirements": {
-      "metal": 4,
-      "conductive": 2
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "warehouse": {
-    "name": "WAREHOUSE",
-    "icon": "📦",
-    "category": "resources",
-    "description": "Storage facility for colony resources",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "materials": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "materials": 15,
-      "money": 20
-    },
-    "itemRequirements": {
-      "wood": 6,
-      "textiles": 2
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "shop": {
-    "name": "SHOP",
-    "icon": "🛒",
-    "category": "others",
-    "description": "Commercial center for trade and commerce",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "money": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "social": 12,
-      "money": 15
-    },
-    "itemRequirements": {
-      "textiles": 3,
-      "vegetables": 2
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "government": {
-    "name": "GOVERNMENT",
-    "icon": "🏛️",
-    "category": "others",
-    "description": "Administrative center for colony governance",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "social": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      },
-      "technology": {
-        "baseAmount": 0.5,
-        "interval": 5000,
-        "type": "currency"
+      "carbon": {
+        "baseAmount": 3,
+        "interval": 10000,
+        "type": "material"
       }
     },
     "upgradeRequirements": {
       "social": 20,
-      "technology": 15
-    },
-    "itemRequirements": {
-      "metal": 3,
-      "conductive": 4
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "commsArray": {
-    "name": "COMMS ARRAY",
-    "icon": "📡",
-    "category": "others",
-    "description": "Communication hub for long-range contact",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "technology": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "technology": 20,
-      "materials": 25
-    },
-    "itemRequirements": {
-      "conductive": 5,
-      "radioactive": 2
-    },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
-  },
-  "defenseWall": {
-    "name": "DEFENSE WALL",
-    "icon": "🛡️",
-    "category": "others",
-    "description": "Protective barrier for colony security",
-    "maxOccupancy": 6,
-    "initialLevel": 1,
-    "locked": true,
-    "emissions": {
-      "materials": {
-        "baseAmount": 1,
-        "interval": 5000,
-        "type": "currency"
-      }
-    },
-    "upgradeRequirements": {
-      "materials": 25,
       "money": 20
     },
-    "itemRequirements": {
-      "metal": 7,
-      "carbon": 3
+    "itemRequirements": {},
+    "itemSlots": 2,
+    "unlockConditions": {
+      "buildings": {
+        "hydroponics": {
+          "level": 2
+        }
+      },
+      "currencies": {
+        "social": 3
+      }
     },
-    "itemSlots": 3,
-    "unlockConditions": null,
-    "unlockBonuses": {}
+    "unlockBonuses": {
+      "social": 50,
+      "money": 120
+    }
   }
 }
-
-

@@ -45,21 +45,41 @@ A React-based colony simulation game where players manage resources, build struc
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/colony-sim.git
-cd colony-sim
+git clone https://github.com/tommyparallelnft/ColonySim.git
+cd ColonySim
 ```
 
 2. Install dependencies:
 ```bash
 npm install
+cd notion-backend
+npm install
+cd ..
 ```
 
-3. Start the development server:
-```bash
-npm run dev
-```
+3. **For Local Development with Notion:**
 
-4. Open your browser and navigate to `http://localhost:5173`
+   a. Set up the backend (see [notion-backend/README.md](notion-backend/README.md))
+   
+   b. Start the backend server:
+   ```bash
+   cd notion-backend
+   node index.js
+   ```
+   
+   c. In a new terminal, start the frontend:
+   ```bash
+   npm run dev
+   ```
+   
+   d. Open your browser and navigate to `http://localhost:3000/ColonySim/`
+
+4. **For Local Development without Notion:**
+   ```bash
+   npm run dev
+   ```
+   
+   The game will use the local JSON configuration file.
 
 ## 🎯 How to Play
 
@@ -122,16 +142,52 @@ src/
 
 ## 🚀 Deployment
 
-The project is configured for easy deployment to GitHub Pages:
+### Publishing Updates to GitHub Pages
 
-1. Build the project:
-```bash
-npm run build
+To update the live game with the latest Notion data:
+
+**Windows:**
+```powershell
+.\sync-and-push.ps1
 ```
 
-2. The built files will be in the `dist/` directory
+**Mac/Linux:**
+```bash
+chmod +x sync-and-push.sh
+./sync-and-push.sh
+```
 
-3. Deploy to GitHub Pages or any static hosting service
+**Manual Method:**
+```bash
+# 1. Make sure backend is running
+cd notion-backend && node index.js
+
+# 2. In a new terminal, sync Notion data
+npm run sync-notion
+
+# 3. Commit and push
+git add .
+git commit -m "Update game configuration from Notion"
+git push
+```
+
+The game will automatically rebuild and deploy to GitHub Pages in 1-2 minutes.
+
+### What the Sync Script Does
+
+1. ✅ Fetches all building data from your Notion database
+2. ✅ Updates `src/data/buildingConfigs.json` with the latest data
+3. ✅ Commits and pushes changes to GitHub
+4. ✅ Triggers automatic deployment to GitHub Pages
+
+### How Team Collaboration Works
+
+1. **Team edits Notion database** - Add/remove/modify buildings
+2. **You run the sync script** - `.\sync-and-push.ps1`
+3. **GitHub Pages updates** - Live game reflects Notion changes in ~2 minutes
+4. **Team sees results** - Everyone can test the updated game at the GitHub Pages URL
+
+No need to deploy a backend server - the sync script bakes the Notion data into the static build!
 
 ## 🤝 Contributing
 
