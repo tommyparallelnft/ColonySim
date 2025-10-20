@@ -132,22 +132,24 @@ app.get('/api/buildings', async (req, res) => {
     console.log('Fetching buildings from Notion...');
     
     const response = await notion.databases.query({
-      database_id: buildingsDatabaseId,
-      sorts: [
-        {
-          property: 'BuildingName',
-          direction: 'ascending'
-        }
-      ]
+      database_id: buildingsDatabaseId
+      // No sorting - uses Notion's default order (manual drag-and-drop order)
     });
 
-    const buildings = {};
+    // Use an array to preserve Notion's order, then convert to object with preserved insertion order
+    const buildingsArray = [];
     response.results.forEach(page => {
       const building = transformNotionPageToBuilding(page);
       // Only include buildings with valid ID and name
       if (building.id && building.name) {
-        buildings[building.id] = building;
+        buildingsArray.push(building);
       }
+    });
+
+    // Convert to object while preserving order (modern JS preserves insertion order)
+    const buildings = {};
+    buildingsArray.forEach(building => {
+      buildings[building.id] = building;
     });
 
     console.log(`Successfully fetched ${Object.keys(buildings).length} buildings`);
@@ -169,21 +171,23 @@ app.get('/api/categories', async (req, res) => {
     
     // First fetch buildings to assign them to categories
     const buildingsResponse = await notion.databases.query({
-      database_id: buildingsDatabaseId,
-      sorts: [
-        {
-          property: 'BuildingName',
-          direction: 'ascending'
-        }
-      ]
+      database_id: buildingsDatabaseId
+      // No sorting - uses Notion's default order (manual drag-and-drop order)
     });
 
-    const buildings = {};
+    // Use an array to preserve Notion's order, then convert to object with preserved insertion order
+    const buildingsArray = [];
     buildingsResponse.results.forEach(page => {
       const building = transformNotionPageToBuilding(page);
-      if (building.id) {
-        buildings[building.id] = building;
+      if (building.id && building.name) {
+        buildingsArray.push(building);
       }
+    });
+
+    // Convert to object while preserving order (modern JS preserves insertion order)
+    const buildings = {};
+    buildingsArray.forEach(building => {
+      buildings[building.id] = building;
     });
 
     // Generate categories with buildings assigned

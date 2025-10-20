@@ -35,20 +35,20 @@ function processUnlockConditions(unlockConditions) {
 
 const initialGameState = {
   currencies: {
-    social: 10,
-    technology: 10,
-    money: 10,
-    materials: 10
+    social: 15,        // Main progression gate early on - allows immediate growth without trivializing unlocks
+    money: 10,         // Soft gate for upgrades - keeps player from upgrading everything at once
+    technology: 0,     // Forces reliance on early production chains - earned via Mine or Research Center
+    materials: 0       // Derived from sub-material buildings - earned via Hydroponics, Mine, etc.
   },
   materials: {
-    carbon: 10,
-    conductive: 10,
-    metal: 10,
-    radioactive: 5,
-    meat: 5,
-    vegetables: 10,
-    textiles: 10,
-    wood: 10
+    wood: 5,           // Used early for Gym and Tavern item requirements (small crafting buffer)
+    textiles: 5,       // Needed for Tavern and Processing Plant later - enough to build momentum early
+    metal: 3,          // Mine-produced, but small starter stock allows early Warehouse/Processing tests
+    vegetables: 0,     // Early Hydroponics yield - no need to start with any
+    carbon: 0,         // Late-game sub-materials start at zero to preserve pacing
+    conductive: 0,     // Late-game sub-materials start at zero to preserve pacing
+    radioactive: 0,    // Late-game sub-materials start at zero to preserve pacing
+    meat: 0            // Earned through gameplay
   },
   buildings: {
     // Buildings will be loaded from Notion

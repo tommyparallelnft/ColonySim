@@ -11,18 +11,21 @@
     "emissions": {
       "social": {
         "baseAmount": 1,
-        "interval": 5000,
+        "interval": 4000,
         "type": "currency"
       }
     },
     "upgradeRequirements": {
-      "social": 8,
-      "money": 10
+      "social": 4,
+      "money": 4
     },
     "itemRequirements": {},
     "itemSlots": 3,
     "unlockConditions": {},
-    "unlockBonuses": {}
+    "unlockBonuses": {
+      "social": 10,
+      "money": 5
+    }
   },
   "hydroponics": {
     "id": "hydroponics",
@@ -33,24 +36,33 @@
     "maxOccupancy": 3,
     "initialLevel": 1,
     "locked": true,
-    "emissions": {},
-    "upgradeRequirements": {
-      "social": 20,
-      "money": 20
+    "emissions": {
+      "vegetables": {
+        "baseAmount": 3,
+        "interval": 9000,
+        "type": "material"
+      }
     },
-    "itemRequirements": {},
+    "upgradeRequirements": {
+      "social": 10,
+      "money": 10
+    },
+    "itemRequirements": {
+      "water": 4,
+      "textiles": 2
+    },
     "itemSlots": 2,
     "unlockConditions": {
       "buildings": {
         "habUnit": {
           "level": 2
         }
-      },
-      "currencies": {
-        "social": 3
       }
     },
-    "unlockBonuses": {}
+    "unlockBonuses": {
+      "money": 8,
+      "social": 6
+    }
   },
   "mine": {
     "id": "mine",
@@ -62,31 +74,38 @@
     "initialLevel": 1,
     "locked": true,
     "emissions": {
-      "carbon": {
-        "baseAmount": 3,
-        "interval": 10000,
+      "metal": {
+        "baseAmount": 2,
+        "interval": 12000,
         "type": "material"
       }
     },
     "upgradeRequirements": {
-      "social": 20,
-      "money": 20
+      "social": 16,
+      "money": 14,
+      "materials": 6
     },
-    "itemRequirements": {},
+    "itemRequirements": {
+      "wood": 6,
+      "water": 6
+    },
     "itemSlots": 1,
     "unlockConditions": {
       "buildings": {
         "hydroponics": {
-          "level": 2
+          "level": 4
+        },
+        "watertower": {
+          "level": 3
         }
       },
       "currencies": {
-        "social": 3
+        "social": 12
       }
     },
     "unlockBonuses": {
-      "social": 50,
-      "money": 120
+      "technology": 5,
+      "money": 12
     }
   },
   "watertower": {
@@ -99,31 +118,351 @@
     "initialLevel": 1,
     "locked": true,
     "emissions": {
-      "carbon": {
+      "water": {
         "baseAmount": 3,
-        "interval": 10000,
+        "interval": 9000,
         "type": "material"
       }
     },
     "upgradeRequirements": {
-      "social": 20,
-      "money": 20
+      "money": 12,
+      "social": 10
     },
-    "itemRequirements": {},
+    "itemRequirements": {
+      "wood": 5
+    },
     "itemSlots": 2,
     "unlockConditions": {
       "buildings": {
         "hydroponics": {
+          "level": 3
+        }
+      }
+    },
+    "unlockBonuses": {
+      "money": 10
+    }
+  },
+  "commsarray": {
+    "id": "commsarray",
+    "name": "COMMS ARRAY",
+    "icon": "📡",
+    "category": "Others",
+    "description": "Comms Array description here",
+    "maxOccupancy": 1,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {
+      "money": {
+        "baseAmount": 3,
+        "interval": 7000,
+        "type": "currency"
+      }
+    },
+    "upgradeRequirements": {
+      "money": 20,
+      "social": 18,
+      "technology": 10
+    },
+    "itemRequirements": {
+      "textiles": 6,
+      "wood": 4
+    },
+    "itemSlots": 1,
+    "unlockConditions": {
+      "buildings": {
+        "tavern": {
+          "level": 3
+        },
+        "processingplant": {
+          "level": 6
+        }
+      }
+    },
+    "unlockBonuses": {
+      "money": 15,
+      "social": 10
+    }
+  },
+  "processingplant": {
+    "id": "processingplant",
+    "name": "PROCESSING PLANT",
+    "icon": "🏭",
+    "category": "Processing",
+    "description": "Processing Plant description here",
+    "maxOccupancy": 6,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {
+      "money": {
+        "baseAmount": 4,
+        "interval": 8000,
+        "type": "currency"
+      }
+    },
+    "upgradeRequirements": {
+      "technology": 20,
+      "materials": 25,
+      "social": 18,
+      "money": 18
+    },
+    "itemRequirements": {
+      "metal": 8,
+      "carbon": 2,
+      "textiles": 6,
+      "wood": 6
+    },
+    "itemSlots": 3,
+    "unlockConditions": {
+      "buildings": {
+        "warehouse": {
+          "level": 4
+        },
+        "mine": {
+          "level": 5
+        }
+      }
+    },
+    "unlockBonuses": {
+      "money": 15,
+      "technology": 10
+    }
+  },
+  "warehouse": {
+    "id": "warehouse",
+    "name": "WAREHOUSE",
+    "icon": "📦",
+    "category": "Resources",
+    "description": "Warehouse description here",
+    "maxOccupancy": 6,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {},
+    "upgradeRequirements": {
+      "money": 16,
+      "materials": 15,
+      "social": 14
+    },
+    "itemRequirements": {
+      "wood": 8,
+      "metal": 4
+    },
+    "itemSlots": 3,
+    "unlockConditions": {
+      "buildings": {
+        "mine": {
+          "level": 3
+        }
+      }
+    },
+    "unlockBonuses": {
+      "money": 10
+    }
+  },
+  "shop": {
+    "id": "shop",
+    "name": "SHOP",
+    "icon": "🛒",
+    "category": "Others",
+    "description": "Gim’s Emporioum",
+    "maxOccupancy": 6,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {
+      "technology": {
+        "baseAmount": 3,
+        "interval": 8000,
+        "type": "currency"
+      },
+      "money": {
+        "baseAmount": 2,
+        "interval": 8000,
+        "type": "currency"
+      }
+    },
+    "upgradeRequirements": {
+      "technology": 60,
+      "materials": 40
+    },
+    "itemRequirements": {
+      "conductive": 5,
+      "metal": 4
+    },
+    "itemSlots": 3,
+    "unlockConditions": {
+      "buildings": {
+        "researchcenter": {
           "level": 2
         }
       },
       "currencies": {
-        "social": 3
+        "technology": 80
       }
     },
     "unlockBonuses": {
-      "social": 50,
-      "money": 120
+      "technology": 100,
+      "money": 80
+    }
+  },
+  "defensewall": {
+    "id": "defensewall",
+    "name": "DEFENSE WALL",
+    "icon": "🛡️",
+    "category": "Others",
+    "description": "Defense Wall description here",
+    "maxOccupancy": 6,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {
+      "materials": {
+        "baseAmount": 3,
+        "interval": 10000,
+        "type": "currency"
+      }
+    },
+    "upgradeRequirements": {
+      "materials": 50,
+      "technology": 50
+    },
+    "itemRequirements": {
+      "metal": 6,
+      "carbon": 5
+    },
+    "itemSlots": 3,
+    "unlockConditions": {
+      "buildings": {
+        "commsarray": {
+          "level": 1
+        }
+      },
+      "currencies": {
+        "materials": 60
+      }
+    },
+    "unlockBonuses": {
+      "materials": 80,
+      "technology": 60
+    }
+  },
+  "gym": {
+    "id": "gym",
+    "name": "GYM",
+    "icon": "🏋️",
+    "category": "Wellbeing",
+    "description": "Gym description here",
+    "maxOccupancy": 6,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {
+      "social": {
+        "baseAmount": 2,
+        "interval": 6000,
+        "type": "currency"
+      }
+    },
+    "upgradeRequirements": {
+      "social": 22,
+      "money": 18,
+      "technology": 8
+    },
+    "itemRequirements": {
+      "wood": 6
+    },
+    "itemSlots": 3,
+    "unlockConditions": {
+      "buildings": {
+        "researchcenter": {
+          "level": 3
+        },
+        "hydroponics": {
+          "level": 6
+        }
+      }
+    },
+    "unlockBonuses": {
+      "social": 20
+    }
+  },
+  "tavern": {
+    "id": "tavern",
+    "name": "TAVERN",
+    "icon": "🍺",
+    "category": "Wellbeing",
+    "description": "Tavern Description here",
+    "maxOccupancy": 6,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {
+      "social": {
+        "baseAmount": 3,
+        "interval": 7000,
+        "type": "currency"
+      }
+    },
+    "upgradeRequirements": {
+      "social": 26,
+      "money": 22,
+      "technology": 10
+    },
+    "itemRequirements": {
+      "wood": 6,
+      "textiles": 6
+    },
+    "itemSlots": 3,
+    "unlockConditions": {
+      "buildings": {
+        "gym": {
+          "level": 4
+        },
+        "watertower": {
+          "level": 5
+        }
+      }
+    },
+    "unlockBonuses": {
+      "social": 30,
+      "money": 10
+    }
+  },
+  "researchcenter": {
+    "id": "researchcenter",
+    "name": "RESEARCH CENTER",
+    "icon": "🔬",
+    "category": "Processing",
+    "description": "Research Center description here",
+    "maxOccupancy": 6,
+    "initialLevel": 1,
+    "locked": true,
+    "emissions": {
+      "technology": {
+        "baseAmount": 2,
+        "interval": 11000,
+        "type": "currency"
+      }
+    },
+    "upgradeRequirements": {
+      "technology": 40,
+      "money": 22,
+      "social": 20
+    },
+    "itemRequirements": {
+      "conductive": 3,
+      "metal": 10,
+      "water": 8
+    },
+    "itemSlots": 3,
+    "unlockConditions": {
+      "buildings": {
+        "processingplant": {
+          "level": 5
+        },
+        "mine": {
+          "level": 6
+        }
+      }
+    },
+    "unlockBonuses": {
+      "technology": 20
     }
   }
 }

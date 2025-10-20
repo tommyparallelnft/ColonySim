@@ -1,9 +1,9 @@
 import React from 'react'
 import Building from './Building'
 
-function BuildingPanel({ title, buildings, currencies, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, gameState, onRegisterFloatingIndicator }) {
+function BuildingPanel({ title, categoryKey, buildings, currencies, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, gameState, onRegisterFloatingIndicator }) {
   return (
-    <div className={`building-panel ${title.toLowerCase()}-panel`}>
+    <div className={`building-panel ${categoryKey}`}>
       <div className="panel-header">{title}</div>
       <div className="panel-content">
         <div className="buildings-container">

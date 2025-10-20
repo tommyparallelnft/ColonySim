@@ -282,6 +282,27 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* Category-specific tints */
+.building-panel.wellbeing {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 255, 136, 0.02));
+    border: 1px solid rgba(0, 255, 136, 0.15);
+}
+
+.building-panel.resources {
+    background: linear-gradient(135deg, rgba(255, 204, 0, 0.05), rgba(255, 204, 0, 0.02));
+    border: 1px solid rgba(255, 204, 0, 0.15);
+}
+
+.building-panel.processing {
+    background: linear-gradient(135deg, rgba(0, 136, 255, 0.05), rgba(0, 136, 255, 0.02));
+    border: 1px solid rgba(0, 136, 255, 0.15);
+}
+
+.building-panel.others {
+    background: linear-gradient(135deg, rgba(136, 0, 255, 0.05), rgba(136, 0, 255, 0.02));
+    border: 1px solid rgba(136, 0, 255, 0.15);
+}
+
 .panel-header {
     background: #2a2a2a;
     color: white;
