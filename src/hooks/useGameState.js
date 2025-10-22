@@ -50,6 +50,7 @@ const initialGameState = {
     radioactive: 0,    // Late-game sub-materials start at zero to preserve pacing
     meat: 0            // Earned through gameplay
   },
+  stability: 50,       // Colony stability (0-100), starts at 50 for balanced gameplay
   buildings: {
     // Buildings will be loaded from Notion
     // This initial state is kept as a fallback in case Notion fails to load
@@ -106,7 +107,9 @@ export function useGameState() {
                     currency, 
                     { current: existingBuilding.requirements?.[currency]?.current || 0, needed }
                   ])
-                ) : existingBuilding.requirements
+                ) : existingBuilding.requirements,
+              accumulatedResources: existingBuilding.accumulatedResources || {},
+              emissions: config.emissions || null
             }
           } else {
             // Create new building from config
@@ -130,7 +133,9 @@ export function useGameState() {
               items: new Array(config.itemSlots || 3).fill(null),
               locked: config.locked || false,
               category: config.category,
-              unlockCondition: config.unlockConditions ? processUnlockConditions(config.unlockConditions) : null
+              unlockCondition: config.unlockConditions ? processUnlockConditions(config.unlockConditions) : null,
+              accumulatedResources: {},
+              emissions: config.emissions || null
             }
           }
         })
@@ -429,6 +434,83 @@ export function useGameState() {
     })
   }, [])
 
+  const collectBuildingResources = useCallback((buildingId) => {
+    setGameState(prev => {
+      const building = prev.buildings[buildingId]
+      if (!building || !building.accumulatedResources) return prev
+      
+      const accumulated = building.accumulatedResources
+      
+      // If no resources accumulated, return unchanged
+      if (Object.keys(accumulated).length === 0) return prev
+      
+      // Add accumulated resources to main pools
+      const newCurrencies = { ...prev.currencies }
+      const newMaterials = { ...prev.materials }
+      
+      Object.entries(accumulated).forEach(([resourceType, amount]) => {
+        if (amount > 0) {
+          // Check if it's a currency or material
+          if (newCurrencies[resourceType] !== undefined) {
+            newCurrencies[resourceType] += amount
+          } else if (newMaterials[resourceType] !== undefined) {
+            newMaterials[resourceType] += amount
+          }
+        }
+      })
+      
+      return {
+        ...prev,
+        currencies: newCurrencies,
+        materials: newMaterials,
+        buildings: {
+          ...prev.buildings,
+          [buildingId]: {
+            ...building,
+            accumulatedResources: {}
+          }
+        }
+      }
+    })
+  }, [])
+
+  const accumulateBuildingResource = useCallback((buildingId, resourceType, amount) => {
+    setGameState(prev => {
+      const building = prev.buildings[buildingId]
+      if (!building) return prev
+      
+      const currentAccumulated = building.accumulatedResources[resourceType] || 0
+      
+      return {
+        ...prev,
+        buildings: {
+          ...prev.buildings,
+          [buildingId]: {
+            ...building,
+            accumulatedResources: {
+              ...building.accumulatedResources,
+              [resourceType]: currentAccumulated + amount
+            }
+          }
+        }
+      }
+    })
+  }, [])
+
+  const updateStability = useCallback((amount) => {
+    setGameState(prev => ({
+      ...prev,
+      stability: Math.max(0, Math.min(100, prev.stability + amount))
+    }))
+  }, [])
+
+  const decayStability = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      stability: Math.max(0, prev.stability - 1)
+    }))
+  }, [])
+
   // Debug logging removed to prevent infinite loop
   
   return {
@@ -441,7 +523,11 @@ export function useGameState() {
     levelUp,
     unlockBuilding,
     addReward,
-    updateMaterial
+    updateMaterial,
+    collectBuildingResources,
+    accumulateBuildingResource,
+    updateStability,
+    decayStability
   }
 }
 

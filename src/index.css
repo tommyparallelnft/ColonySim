@@ -11,6 +11,78 @@ body {
     min-height: 100vh;
 }
 
+/* Game Over Screen */
+.game-over-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+    text-align: center;
+}
+
+.game-over-content {
+    background: #2a2a2a;
+    border-radius: 16px;
+    padding: 40px;
+    border: 2px solid #ff4444;
+    box-shadow: 0 0 30px rgba(255, 68, 68, 0.3);
+    max-width: 500px;
+    width: 90%;
+}
+
+.game-over-title {
+    font-size: 3em;
+    color: #ff4444;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+    animation: pulse 2s infinite;
+}
+
+.game-over-skull {
+    font-size: 4em;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+    text-shadow: none;
+}
+
+.game-over-message {
+    font-size: 1.5em;
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.game-over-subtitle {
+    font-size: 1.1em;
+    color: #cccccc;
+    margin-bottom: 30px;
+    line-height: 1.4;
+}
+
+.restart-button {
+    background: linear-gradient(135deg, #ff4444, #ff6666);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    font-family: 'Chakra Petch', monospace;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.restart-button:hover {
+    background: linear-gradient(135deg, #ff6666, #ff8888);
+    transform: translateY(-2px);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
 .game-container {
     max-width: 2000px;
     margin: 0 auto;
@@ -109,6 +181,83 @@ body {
     padding: 15px;
     margin-bottom: 8px;
     border: 1px solid #404040;
+}
+
+/* Stability Bar - Semi-Circular Design */
+.stability-bar-semicircle {
+    background: #1a1a1a;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 8px;
+    border: 1px solid #404040;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.stability-header {
+    margin-bottom: 15px;
+}
+
+.stability-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: bold;
+    color: white;
+}
+
+.stability-icon {
+    font-size: 1.3em;
+}
+
+.stability-text {
+    font-size: 1em;
+    letter-spacing: 1px;
+}
+
+.stability-semicircle-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+}
+
+.stability-semicircle {
+    width: 220px;
+    height: 120px;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+}
+
+.stability-value-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+}
+
+.stability-number {
+    font-size: 2.5em;
+    font-weight: bold;
+    font-family: 'Chakra Petch', monospace;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stability-status {
+    font-size: 0.8em;
+    font-weight: bold;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
 }
 
 .currency-item {
@@ -272,7 +421,7 @@ body {
     grid-template-columns: 750px calc(100% - 820px);
     grid-template-rows: 1fr 1fr;
     gap: 20px;
-    height: 70vh;
+    height: calc(70vh + 50px);
     min-width: 1850px;
 }
 
@@ -306,7 +455,7 @@ body {
 .panel-header {
     background: #2a2a2a;
     color: white;
-    padding: 15px;
+    padding: 7.5px;
     font-weight: bold;
     font-size: 0.6em;
     text-align: center;
@@ -315,7 +464,7 @@ body {
 }
 
 .panel-content {
-    height: calc(100% - 60px);
+    height: calc(100% - 45px);
     padding: 15px;
     overflow-y: auto;
 }
@@ -469,7 +618,7 @@ body {
     width: 220px;
     flex-shrink: 0;
     flex-grow: 0;
-    height: 260px;
+    min-height: 280px;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -684,9 +833,9 @@ body {
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 4px 8px rgba(0, 255, 136, 0.3); }
-    50% { box-shadow: 0 4px 8px rgba(0, 255, 136, 0.6); }
-    100% { box-shadow: 0 4px 8px rgba(0, 255, 136, 0.3); }
+    0% { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); }
+    50% { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); }
+    100% { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); }
 }
 
 .currency-requirement {
@@ -755,7 +904,8 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 3px;
-    height: 20px;
+    height: 24px;
+    margin-bottom: 16px;
 }
 
 .item-slot {
@@ -814,6 +964,69 @@ body {
     color: #ccc;
     font-weight: bold;
     font-size: 0.75em;
+}
+
+/* 9. Accumulated Resources */
+.accumulated-resources {
+    display: flex;
+    gap: 4px;
+    margin-top: 26px;
+    margin-bottom: 6px;
+    padding: 6px;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 204, 106, 0.1));
+    border: 2px solid #00ff88;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: glow-pulse 2s infinite;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    min-height: 32px;
+    position: relative;
+    z-index: 1;
+}
+
+.accumulated-resources:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 204, 106, 0.2));
+    border-color: #00cc6a;
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
+.accumulated-resources:active {
+    transform: scale(0.98);
+}
+
+@keyframes glow-pulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(0, 255, 136, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(0, 255, 136, 0.5);
+    }
+}
+
+.resource-counter {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 3px 6px;
+    border-radius: 8px;
+    font-size: 0.75em;
+    font-weight: bold;
+    color: white;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.resource-icon {
+    font-size: 1.1em;
+}
+
+.resource-amount {
+    color: #00ff88;
+    font-weight: bold;
 }
 
 /* Locked Building Styles */

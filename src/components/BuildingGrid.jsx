@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import BuildingPanel from './BuildingPanel'
 
-function BuildingGrid({ gameState, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, onRegisterFloatingIndicator }) {
+function BuildingGrid({ gameState, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, onRegisterFloatingIndicator, onCollectResources }) {
   // Fixed category order: Wellbeing (top-left), Resources (top-right), Processing (bottom-left), Others (bottom-right)
   const categoryOrder = [
     { key: 'wellbeing', title: 'WELLBEING' },
@@ -55,6 +55,7 @@ function BuildingGrid({ gameState, onAddOccupant, onAddResource, onCraftItem, on
           isSoundEnabled={isSoundEnabled}
           gameState={gameState}
           onRegisterFloatingIndicator={onRegisterFloatingIndicator}
+          onCollectResources={onCollectResources}
         />
       ))}
     </div>

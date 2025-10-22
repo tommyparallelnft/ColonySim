@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import CurrencyBar from './CurrencyBar'
 import MaterialsBar from './MaterialsBar'
+import StabilityBar from './StabilityBar'
 import BuildingGrid from './BuildingGrid'
 import GameTitle from './GameTitle'
 import GameTimer from './GameTimer'
@@ -15,6 +16,8 @@ import { useSoundToggle } from '../hooks/useSoundToggle'
 import { useFeedback } from '../hooks/useFeedback'
 
 function GameContainer() {
+  const [gameOver, setGameOver] = useState(false)
+  
   const {
     gameState,
     updateCurrency,
@@ -25,7 +28,11 @@ function GameContainer() {
     levelUp,
     unlockBuilding,
     addReward,
-    updateMaterial
+    updateMaterial,
+    collectBuildingResources,
+    accumulateBuildingResource,
+    updateStability,
+    decayStability
   } = useGameState()
 
   const { isSoundEnabled, toggleSound } = useSoundToggle()
@@ -34,6 +41,44 @@ function GameContainer() {
   const { triggerFeedback, getFeedbackClass } = useFeedback()
   
   const floatingIndicatorCallbacks = useRef({})
+  const stabilityDecayInterval = useRef(null)
+
+  // Set up stability decay timer (every 1 second, -1 point)
+  useEffect(() => {
+    stabilityDecayInterval.current = setInterval(() => {
+      decayStability()
+    }, 1000)
+
+    return () => {
+      if (stabilityDecayInterval.current) {
+        clearInterval(stabilityDecayInterval.current)
+      }
+    }
+  }, [decayStability])
+
+  // Check for game over when stability reaches zero
+  useEffect(() => {
+    if (gameState.stability <= 0 && !gameOver) {
+      setGameOver(true)
+      addNotification('GAME OVER! Colony stability has collapsed!', 'error', 10000, '💀')
+    }
+  }, [gameState.stability, gameOver, addNotification])
+
+  // Debug controls for stability
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.key === '+' || event.key === '=') {
+        updateStability(10)
+        addNotification('Stability +10 (Debug)', 'info', 2000, '🔧')
+      } else if (event.key === '-') {
+        updateStability(-10)
+        addNotification('Stability -10 (Debug)', 'info', 2000, '🔧')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [updateStability, addNotification])
 
   const showFloatingIndicator = useCallback((buildingId, emoji, amount) => {
     const callback = floatingIndicatorCallbacks.current[buildingId]
@@ -107,7 +152,58 @@ function GameContainer() {
     return craftItem(buildingId, slotIndex)
   }, [craftItem, triggerFeedback, gameState.buildings, gameState.materials])
 
-  useBuildingEmissions(gameState, updateCurrencyWithFeedback, addNotification, updateMaterialWithFeedback, showFloatingIndicator)
+  const collectBuildingResourcesWithFeedback = useCallback((buildingId) => {
+    const building = gameState.buildings[buildingId]
+    if (!building || !building.accumulatedResources) return
+    
+    const accumulated = building.accumulatedResources
+    
+    // Calculate total stability gain from collected resources
+    let totalStabilityGain = 0
+    
+    // Trigger gained feedback for each accumulated resource and calculate stability gain
+    Object.entries(accumulated).forEach(([resourceType, amount]) => {
+      if (amount > 0) {
+        totalStabilityGain += amount
+        
+        // Check if it's a currency or material
+        if (gameState.currencies[resourceType] !== undefined) {
+          triggerFeedback(`currency-${resourceType}`, 'gained')
+        } else if (gameState.materials[resourceType] !== undefined) {
+          triggerFeedback(`material-${resourceType}`, 'gained')
+        }
+      }
+    })
+    
+    // Update stability based on collected resources
+    if (totalStabilityGain > 0) {
+      updateStability(totalStabilityGain)
+    }
+    
+    collectBuildingResources(buildingId)
+  }, [collectBuildingResources, triggerFeedback, gameState.buildings, gameState.currencies, gameState.materials, updateStability])
+
+  useBuildingEmissions(gameState, accumulateBuildingResource, addNotification, showFloatingIndicator)
+
+  // Game Over Screen
+  if (gameOver) {
+    return (
+      <div className="game-over-screen">
+        <div className="game-over-content">
+          <h1 className="game-over-title">GAME OVER</h1>
+          <div className="game-over-skull">💀</div>
+          <p className="game-over-message">Your colony's stability has collapsed!</p>
+          <p className="game-over-subtitle">The colonists have lost faith in your leadership.</p>
+          <button
+            className="restart-button"
+            onClick={() => window.location.reload()}
+          >
+            🔄 RESTART COLONY
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="game-container">
@@ -123,6 +219,10 @@ function GameContainer() {
         />
         <GameTimer />
       </div>
+      <StabilityBar 
+        stability={gameState.stability}
+        getFeedbackClass={getFeedbackClass}
+      />
       <MaterialsBar materials={gameState.materials} getFeedbackClass={getFeedbackClass} />
       <BuildingGrid 
         gameState={gameState}
@@ -137,6 +237,7 @@ function GameContainer() {
         onAddReward={addReward}
         isSoundEnabled={isSoundEnabled}
         onRegisterFloatingIndicator={handleRegisterFloatingIndicator}
+        onCollectResources={collectBuildingResourcesWithFeedback}
       />
       <NotificationSystem 
         notifications={notifications}

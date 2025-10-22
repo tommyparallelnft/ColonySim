@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { useSoundEffects } from '../hooks/useSoundEffects'
 import FloatingIndicator from './FloatingIndicator'
 
-function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, currencies, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, gameState, onShowFloatingIndicator }) {
+function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, currencies, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, gameState, onShowFloatingIndicator, onCollectResources }) {
   const { playClickSound } = useSoundEffects(isSoundEnabled)
   const [floatingIndicators, setFloatingIndicators] = useState([])
   const getBuildingDescription = (building) => {
@@ -51,7 +51,7 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
       money: '💰',
       materials: '🔧'
     }
-    return icons[currency] || '❓'
+    return icons[currency] || undefined
   }
 
   const getMaterialIcon = (material) => {
@@ -63,9 +63,10 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
       meat: '🥩',
       vegetables: '🥕',
       textiles: '🧵',
-      wood: '🪵'
+      wood: '🪵',
+      water: '💧'
     }
-    return icons[material] || '❓'
+    return icons[material] || '📦'
   }
 
   const getCurrencyLabel = (currency) => {
@@ -209,6 +210,33 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
       onShowFloatingIndicator(showFloatingIndicator)
     }
   }, [onShowFloatingIndicator, showFloatingIndicator, building.name])
+
+  // Check if building has accumulated resources
+  const hasAccumulatedResources = building.accumulatedResources && Object.keys(building.accumulatedResources).length > 0 && 
+    Object.values(building.accumulatedResources).some(amount => amount > 0)
+  
+
+  const handleCollectResources = () => {
+    if (hasAccumulatedResources && onCollectResources) {
+      playClickSound()
+      
+      // Get accumulated resources for notification
+      const accumulated = building.accumulatedResources
+      const resourceList = Object.entries(accumulated)
+        .filter(([_, amount]) => amount > 0)
+        .map(([resource, amount]) => {
+          const icon = getCurrencyIcon(resource) || getMaterialIcon(resource)
+          return `${icon} +${amount} ${resource}`
+        })
+        .join(', ')
+      
+      onCollectResources(building.id)
+      
+      if (onAddNotification) {
+        onAddNotification(`Collected: ${resourceList}`, 'success', 3000, '💰')
+      }
+    }
+  }
 
   return (
     <div className={`building-module compact ${building.locked ? 'locked' : ''} ${canUnlock ? 'can-unlock' : ''}`} style={{ position: 'relative' }}>
@@ -476,6 +504,20 @@ function Building({ building, onAddOccupant, onAddResource, onCraftItem, onCheck
           )
         })}
       </div>
+      
+      {/* 9. Accumulated Resources */}
+      {hasAccumulatedResources && (
+        <div className="accumulated-resources" onClick={handleCollectResources} title="Click to collect accumulated resources">
+          {Object.entries(building.accumulatedResources)
+            .filter(([_, amount]) => amount > 0)
+            .map(([resourceType, amount]) => (
+              <div key={resourceType} className="resource-counter">
+                <span className="resource-icon">{getCurrencyIcon(resourceType) || getMaterialIcon(resourceType)}</span>
+                <span className="resource-amount">{amount}</span>
+              </div>
+            ))}
+        </div>
+      )}
     </div>
   )
 }

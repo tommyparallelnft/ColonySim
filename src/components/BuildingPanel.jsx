@@ -1,7 +1,7 @@
 import React from 'react'
 import Building from './Building'
 
-function BuildingPanel({ title, categoryKey, buildings, currencies, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, gameState, onRegisterFloatingIndicator }) {
+function BuildingPanel({ title, categoryKey, buildings, currencies, onAddOccupant, onAddResource, onCraftItem, onCheckUpgrade, onAddNotification, onLevelUp, onUnlockBuilding, onOpenModal, onAddReward, isSoundEnabled, gameState, onRegisterFloatingIndicator, onCollectResources }) {
   return (
     <div className={`building-panel ${categoryKey}`}>
       <div className="panel-header">{title}</div>
@@ -24,6 +24,7 @@ function BuildingPanel({ title, categoryKey, buildings, currencies, onAddOccupan
               isSoundEnabled={isSoundEnabled}
               gameState={gameState}
               onShowFloatingIndicator={(callback) => onRegisterFloatingIndicator(building.id, callback)}
+              onCollectResources={onCollectResources}
             />
           ))}
         </div>

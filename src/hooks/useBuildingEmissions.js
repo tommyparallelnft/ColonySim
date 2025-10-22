@@ -1,56 +1,159 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 
-export function useBuildingEmissions(gameState, updateCurrency, addNotification, updateMaterial, showFloatingIndicator) {
+export function useBuildingEmissions(gameState, accumulateBuildingResource, addNotification, showFloatingIndicator) {
   const intervalRef = useRef(null)
   const hydroponicsIntervalRef = useRef(null)
+  
+  // Create a stable key based on building states to prevent unnecessary re-renders
+  const buildingsKey = useMemo(() => {
+    return Object.entries(gameState.buildings)
+      .map(([id, b]) => `${id}:${b.locked}:${b.occupancy}`)
+      .join('|')
+  }, [gameState.buildings])
 
   useEffect(() => {
-    // Clear existing intervals
+    // Clear existing intervals first
     if (intervalRef.current) {
-      clearInterval(intervalRef.current)
+      if (Array.isArray(intervalRef.current)) {
+        intervalRef.current.forEach(intervalId => clearInterval(intervalId))
+      } else {
+        clearInterval(intervalRef.current)
+      }
     }
     if (hydroponicsIntervalRef.current) {
       clearInterval(hydroponicsIntervalRef.current)
     }
 
-    // Set up new interval for building emissions (every 5 seconds)
-    intervalRef.current = setInterval(() => {
-      Object.entries(gameState.buildings).forEach(([buildingId, building]) => {
-        if (building.occupancy > 0 && !building.locked && building.name !== 'HYDROPONICS') {
-          emitFromBuilding(buildingId, building, updateCurrency, addNotification)
-        }
+    // Set up intervals for building emissions
+    const intervals = []
+    
+    console.log('🔧 Setting up emissions for buildings:', Object.keys(gameState.buildings))
+    
+    Object.entries(gameState.buildings).forEach(([buildingId, building]) => {
+      console.log(`🏗️ Building ${buildingId}:`, {
+        locked: building.locked,
+        occupancy: building.occupancy,
+        hasEmissions: !!building.emissions,
+        emissions: building.emissions
       })
-    }, 5000)
-
-    // Set up separate interval for Hydroponics (every 10 seconds)
-    hydroponicsIntervalRef.current = setInterval(() => {
-      const hydroponics = gameState.buildings.hydroponics
-      if (hydroponics && hydroponics.occupancy > 0 && !hydroponics.locked) {
-        emitFromHydroponics('hydroponics', hydroponics, updateMaterial, addNotification)
+      
+      if (!building.locked) { // Set up intervals for all unlocked buildings
+        console.log(`✅ Setting up emissions for unlocked building: ${buildingId}`)
+        
+        if (building.emissions) {
+          console.log(`📊 Using Notion emissions for ${buildingId}:`, building.emissions)
+          // Use Notion configuration
+          Object.entries(building.emissions).forEach(([resourceType, config]) => {
+            const interval = config.interval || 5000 // Default to 5 seconds if not specified
+            console.log(`⏰ Creating interval for ${buildingId} -> ${resourceType} every ${interval}ms`)
+            
+            const intervalId = setInterval(() => {
+              const currentBuilding = gameState.buildings[buildingId]
+              console.log(`🔄 Interval tick for ${buildingId} -> ${resourceType}:`, {
+                exists: !!currentBuilding,
+                occupancy: currentBuilding?.occupancy,
+                locked: currentBuilding?.locked,
+                intervalMs: interval
+              })
+              
+              if (currentBuilding && 
+                  currentBuilding.occupancy > 0 && 
+                  !currentBuilding.locked) {
+                console.log(`🚀 Emitting from ${buildingId} (resource: ${resourceType})`)
+                emitFromBuilding(buildingId, currentBuilding, accumulateBuildingResource, addNotification)
+              } else {
+                console.log(`⏸️ Not emitting from ${buildingId} because:`, {
+                  hasBuilding: !!currentBuilding,
+                  hasOccupancy: currentBuilding?.occupancy > 0,
+                  isUnlocked: !currentBuilding?.locked
+                })
+              }
+            }, interval)
+            
+            intervals.push(intervalId)
+          })
+        } else {
+          console.log(`⚠️ No Notion emissions for ${buildingId}, using fallback`)
+          // Use fallback hardcoded emissions (every 5 seconds)
+          const intervalId = setInterval(() => {
+            if (gameState.buildings[buildingId] && 
+                gameState.buildings[buildingId].occupancy > 0 && 
+                !gameState.buildings[buildingId].locked) {
+              emitFromBuilding(buildingId, gameState.buildings[buildingId], accumulateBuildingResource, addNotification)
+            }
+          }, 5000)
+          
+          intervals.push(intervalId)
+        }
+      } else {
+        console.log(`🔒 Building ${buildingId} is locked, skipping`)
       }
-    }, 10000)
+    })
+    
+    console.log(`📈 Created ${intervals.length} emission intervals`)
+    
+    intervalRef.current = intervals
 
     return () => {
+      console.log('🧹 Cleaning up emission intervals')
       if (intervalRef.current) {
-        clearInterval(intervalRef.current)
+        if (Array.isArray(intervalRef.current)) {
+          intervalRef.current.forEach(intervalId => clearInterval(intervalId))
+        } else {
+          clearInterval(intervalRef.current)
+        }
       }
       if (hydroponicsIntervalRef.current) {
         clearInterval(hydroponicsIntervalRef.current)
       }
     }
-  }, [gameState.buildings, updateCurrency, updateMaterial, showFloatingIndicator])
+  }, [buildingsKey, accumulateBuildingResource, showFloatingIndicator])
 
-  const emitFromBuilding = (buildingId, building, updateCurrency, addNotification) => {
+  const emitFromBuilding = (buildingId, building, accumulateBuildingResource, addNotification) => {
+    console.log(`🔥 emitFromBuilding called for ${buildingId}:`, {
+      name: building.name,
+      occupancy: building.occupancy,
+      level: building.level,
+      hasEmissions: !!building.emissions,
+      emissions: building.emissions
+    })
+    
     // Calculate multipliers: colonists × level
     const colonistMultiplier = building.occupancy
     const levelMultiplier = building.level
     const totalMultiplier = colonistMultiplier * levelMultiplier
 
-    // Base emission amount (1 per multiplier)
+    console.log(`📊 Multipliers: ${colonistMultiplier} colonists × ${levelMultiplier} level = ${totalMultiplier}`)
+
+    // Check if building has emissions configuration from Notion
+    if (building.emissions) {
+      console.log(`📋 Processing Notion emissions for ${buildingId}:`, building.emissions)
+      Object.entries(building.emissions).forEach(([resourceType, config]) => {
+        const baseAmount = config.baseAmount || 1
+        const emissionAmount = baseAmount * totalMultiplier
+        
+        console.log(`💰 ${resourceType}: ${baseAmount} base × ${totalMultiplier} multiplier = ${emissionAmount}`)
+        
+        if (emissionAmount > 0) {
+          console.log(`✅ Accumulating ${emissionAmount} ${resourceType} for ${buildingId}`)
+          accumulateBuildingResource(buildingId, resourceType, emissionAmount)
+          if (addNotification) {
+            addNotification(`${building.name} produced ${emissionAmount} ${resourceType} (${colonistMultiplier} colonists × Lv.${levelMultiplier})`, 'success', 2000, building.icon)
+          }
+          if (showFloatingIndicator) {
+            const emoji = getCurrencyEmoji(resourceType) || getMaterialEmoji(resourceType)
+            showFloatingIndicator(buildingId, emoji, emissionAmount)
+          }
+        }
+      })
+      return
+    }
+
+    // Fallback to hardcoded emissions for buildings without Notion config
     const baseAmount = 1
     const emissionAmount = baseAmount * totalMultiplier
 
-    // Define what each building emits
+    // Define what each building emits (fallback)
     const buildingEmissions = {
       'HAB UNIT': { social: emissionAmount },
       'GYM': { social: emissionAmount },
@@ -70,7 +173,7 @@ export function useBuildingEmissions(gameState, updateCurrency, addNotification,
     
     Object.entries(emissions).forEach(([currency, amount]) => {
       if (amount > 0) {
-        updateCurrency(currency, amount)
+        accumulateBuildingResource(buildingId, currency, amount)
         if (addNotification) {
           addNotification(`${building.name} produced ${amount} ${currency} (${colonistMultiplier} colonists × Lv.${levelMultiplier})`, 'success', 2000, building.icon)
         }
@@ -82,39 +185,29 @@ export function useBuildingEmissions(gameState, updateCurrency, addNotification,
     })
   }
 
-  const emitFromHydroponics = (buildingId, building, updateMaterial, addNotification) => {
-    // Calculate multipliers: colonists × level (same as other buildings)
-    const colonistMultiplier = building.occupancy
-    const levelMultiplier = building.level
-    const totalMultiplier = colonistMultiplier * levelMultiplier
-
-    // Base emission amount for Hydroponics (3 vegetables per multiplier)
-    const baseAmount = 3
-    const vegetableAmount = baseAmount * totalMultiplier
-    
-    if (updateMaterial && vegetableAmount > 0) {
-      updateMaterial('vegetables', vegetableAmount)
-      if (addNotification) {
-        addNotification(`${building.name} produced ${vegetableAmount} vegetables (${colonistMultiplier} colonists × Lv.${levelMultiplier})`, 'success', 2000, building.icon)
-      }
-      if (showFloatingIndicator) {
-        showFloatingIndicator(buildingId, '🥕', vegetableAmount)
-      }
-    }
+  const emitFromHydroponics = (buildingId, building, accumulateBuildingResource, addNotification) => {
+    // Use the same logic as regular buildings - check for Notion emissions config
+    emitFromBuilding(buildingId, building, accumulateBuildingResource, addNotification)
   }
 
   const getMaterialEmoji = (material) => {
     const emojis = {
+      // Basic materials
       carbon: '⚫',
       conductive: '⚡',
       metal: '🔩',
       radioactive: '☢️',
+      wood: '🪵',
+      water: '💧',
+      textiles: '🧵',
+      
+      // Food materials
       meat: '🥩',
       vegetables: '🥕',
-      textiles: '🧵',
-      wood: '🪵'
+      
+      // Fallback for any missing materials
     }
-    return emojis[material] || '❓'
+    return emojis[material] || '📦'
   }
 
   const getCurrencyEmoji = (currency) => {
@@ -124,7 +217,7 @@ export function useBuildingEmissions(gameState, updateCurrency, addNotification,
       money: '💰',
       materials: '🔧'
     }
-    return emojis[currency] || '❓'
+    return emojis[currency] || undefined
   }
 }
 
